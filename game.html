@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-bt">
+  <head>
+    <title>Rocket Game</title>
+    <meta charset="utf-8">
+    <!-- <link rel='stylesheet' type='text/css' href='styles.css' title='General styles' /> -->
+  </head>
+  <body>
+    <canvas id="minha-tela" width="800" height="400" style="border: #F00 solid 1px;"></canvas>
+    <script>
+      const canvasWidth = 800;
+      const canvasHeight = 400;
+      var canvas = document.getElementById('minha-tela');
+      var context = canvas.getContext('2d');
+
+      var rocketX = 600;
+      var rocketY = 200;
+      var rocketWidth = 50;
+      var rocketHeight = 50
+
+      requestAnimationFrame(gameloop);
+
+      window.onkeydown = press;
+      function press(key) {
+        if (key.keyCode == 38) {
+          console.log('up');
+          rocketY = rocketY - 15;
+        }
+        if (key.keyCode == 40) {
+          console.log('down');
+          rocketY = rocketY + 15;
+        }
+      }
+
+      function gameloop() {
+        if (rocketX <= 700) desenharQuadrado(rocketX, rocketY);
+        requestAnimationFrame(gameloop);
+        // else clearInterval(); //termina o game loop
+        // x = x + 10; //incrementar a variável x indicando o deslocamento para a direita
+      }
+
+      // function detectarColisao() {
+      //   if (((rocketX + rocketWidth) > objectX && rocketX < (objectX + objectWidth)) && ((rocketY + rocketHeight) > objectY && rocketY < (objectY + objectHeight))) {
+      //     //interrompe o game loop parando a movimentação do quadrado vermelho
+      //     window.clearInterval(id_interval); 
+      //   }
+      // }
+
+      function desenharQuadrado(pX, pY) {
+        const img = new Image();
+        img.src = "./rocket-emoji.png";
+        // console.log(img);
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+        context.drawImage(img, rocketX, rocketY);
+        // ctx.clearRect(0, 0, 800, 400); //antes de fazer o desenho é preciso limpar o canvas
+        // ctx.fillStyle = '#00F';
+        // ctx.fillRect(pX, pY, 100, 100);
+      }
+    </script>
+  </body>
+</html>
