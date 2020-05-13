@@ -13,48 +13,78 @@
       var canvas = document.getElementById('minha-tela');
       var context = canvas.getContext('2d');
 
-      var rocketX = 100;
+      var minWidth = 40;
+      var minHeight = 40;
+      var maxWidth = 760;
+      var maxHeight = 360;
+      var counter = 0;
+
+      var rocketX = 0;
       var rocketY = 150;
       var rocketWidth = 50;
       var rocketHeight = 50
 
+      var objectX = 0;
+      var objectY = 0;
+      var objectWidth = 40;
+      var objectHeight = 40;
+
       requestAnimationFrame(gameloop);
 
+      //KEYS LISTENER
       window.onkeydown = press;
       function press(key) {
+        if (key.keyCode == 37) {
+          if (rocketX < 0) rocketX = rocketX + 15;
+          rocketX = rocketX - 15;
+        }
         if (key.keyCode == 38) {
-          console.log('up');
+          if (rocketY < 0) rocketY = rocketY + 15;
           rocketY = rocketY - 15;
         }
+        if (key.keyCode == 39) {          
+          if (rocketX > 750) rocketX = rocketX - 15;
+          rocketX = rocketX + 15;
+        }
         if (key.keyCode == 40) {
-          console.log('down');
+          if (rocketY > 350) rocketY = rocketY - 15;
           rocketY = rocketY + 15;
         }
       }
 
+      //EXECUTE GAME
       function gameloop() {
-        if (rocketX <= 700) desenharQuadrado(rocketX, rocketY);
-        requestAnimationFrame(gameloop);
-        // else clearInterval(); //termina o game loop
-        // x = x + 10; //incrementar a variável x indicando o deslocamento para a direita
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+        renderRocket(rocketX, rocketY);
+        renderSquare(objectX, objectY);
+        var colision = detectarColisao();
+        if (colision === true ) {
+          return null;
+        } else {
+          if (counter++%50==0) randomizer();
+          requestAnimationFrame(gameloop);
+        }
       }
 
-      // function detectarColisao() {
-      //   if (((rocketX + rocketWidth) > objectX && rocketX < (objectX + objectWidth)) && ((rocketY + rocketHeight) > objectY && rocketY < (objectY + objectHeight))) {
-      //     //interrompe o game loop parando a movimentação do quadrado vermelho
-      //     window.clearInterval(id_interval); 
-      //   }
-      // }
-
-      function desenharQuadrado(pX, pY) {
+      //RENDERS
+      function renderSquare(positionX, positionY) {
+        context.fillStyle = '#000';
+        context.fillRect(positionX, positionY, objectWidth, objectHeight);
+      }
+      function renderRocket(pX, pY) {
         const img = new Image();
         img.src = "./rocket-emoji.png";
-        // console.log(img);
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-        context.drawImage(img, rocketX, rocketY);
-        // ctx.clearRect(0, 0, 800, 400); //antes de fazer o desenho é preciso limpar o canvas
-        // ctx.fillStyle = '#00F';
-        // ctx.fillRect(pX, pY, 100, 100);
+        context.drawImage(img, rocketX, rocketY, rocketWidth, rocketHeight);
+        detectarColisao();
+      }
+      function randomizer() {
+        objectX = Math.floor((Math.random() * (maxWidth - minWidth)) + minWidth);
+        objectY = Math.floor((Math.random() * (maxHeight - minHeight)) + minHeight);
+      }
+      function detectarColisao() {
+        if (((rocketX + rocketWidth) > objectX && rocketX < (objectX + objectWidth)) && ((rocketY + rocketHeight) > objectY && rocketY < (objectY + objectHeight))) {
+          return true;          
+        }
       }
     </script>
   </body>
