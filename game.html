@@ -13,11 +13,13 @@
       var canvas = document.getElementById('minha-tela');
       var context = canvas.getContext('2d');
 
+      var points = 0;
+      var pointsCounter = 0;
+
       var minWidth = 40;
       var minHeight = 40;
       var maxWidth = 760;
       var maxHeight = 360;
-      var counter = 0;
 
       var rocketX = 0;
       var rocketY = 150;
@@ -28,6 +30,7 @@
       var objectY = 0;
       var objectWidth = 40;
       var objectHeight = 40;
+      var objectInterval = 0;
 
       requestAnimationFrame(gameloop);
 
@@ -57,13 +60,30 @@
         context.clearRect(0, 0, canvasWidth, canvasHeight);
         renderRocket(rocketX, rocketY);
         renderSquare(objectX, objectY);
-        var colision = detectarColisao();
-        if (colision === true ) {
-          return null;
+        renderScoreBoard(points)
+        if (pointsCounter++%100==0) points++;
+        var colision = detectColision();
+        if (colision == true || points == 100) {
+          renderGameOver();
         } else {
-          if (counter++%50==0) randomizer();
+          if (objectInterval++%50==0) {
+            if (points == 20) nextStage(20);
+            if (points == 40) nextStage(40);
+            if (points == 60) nextStage(60);
+            randomizer();
+          }
           requestAnimationFrame(gameloop);
         }
+      }
+
+      //STAGES
+      function nextStage(increasedSize) {
+        minWidth = minWidth + increasedSize;
+        minHeight = minHeight + increasedSize;
+        objectWidth = objectWidth + increasedSize;
+        objectHeight = objectHeight + increasedSize;
+        maxWidth = maxWidth - increasedSize;
+        maxHeight = maxHeight - increasedSize;
       }
 
       //RENDERS
@@ -75,13 +95,22 @@
         const img = new Image();
         img.src = "./rocket-emoji.png";
         context.drawImage(img, rocketX, rocketY, rocketWidth, rocketHeight);
-        detectarColisao();
+        detectColision();
       }
       function randomizer() {
         objectX = Math.floor((Math.random() * (maxWidth - minWidth)) + minWidth);
         objectY = Math.floor((Math.random() * (maxHeight - minHeight)) + minHeight);
       }
-      function detectarColisao() {
+      function renderScoreBoard(points) {
+        context.font = "20px Arial";
+        context.strokeText('Placar: '+ points,660,380);
+		  }
+      function renderGameOver() {
+        const img = new Image();
+        img.src = "./gameover.jpg";
+        context.drawImage(img, 0, 0, 300, 200);
+      }
+      function detectColision() {
         if (((rocketX + rocketWidth) > objectX && rocketX < (objectX + objectWidth)) && ((rocketY + rocketHeight) > objectY && rocketY < (objectY + objectHeight))) {
           return true;          
         }
